@@ -532,7 +532,7 @@ public abstract class UnixSyscallHandler<T extends NewFileIO> implements Syscall
     protected final int write(Emulator<?> emulator, int fd, Pointer buffer, int count) {
         byte[] data = buffer.getByteArray(0, count);
         if (log.isDebugEnabled()) {
-            Inspector.inspect(data, "write fd=" + fd + ", buffer=" + buffer + ", count=" + count);
+            Inspector.inspect(data, "write fd=" + fd + ", buffer=" + buffer + ", count=" + count+", LR="+emulator.getContext().getLRPointer().toString());
         }
 
         FileIO file = fdMap.get(fd);

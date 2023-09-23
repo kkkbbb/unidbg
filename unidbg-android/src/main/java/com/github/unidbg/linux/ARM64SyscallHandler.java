@@ -1060,7 +1060,7 @@ public class ARM64SyscallHandler extends AndroidSyscallHandler {
         RegisterContext context = emulator.getContext();
         int status = context.getIntArg(0);
         if (log.isDebugEnabled()) {
-            log.debug("exit with code: " + status, new Exception("exit_group status=" + status));
+            log.debug("exit with code: " + status + "from: "+ context.getLRPointer().toString(), new Exception("exit_group status=" + status));
         } else {
             System.out.println("exit with code: " + status);
         }
@@ -1119,6 +1119,9 @@ public class ARM64SyscallHandler extends AndroidSyscallHandler {
     private static final int PR_SET_THP_DISABLE = 41;
     private static final int BIONIC_PR_SET_VMA = 0x53564d41;
     private static final int PR_SET_PTRACER = 0x59616d61;
+    private static final int PR_GET_DUMPABLE = 3;
+    private static final int PR_SET_DUMPABLE = 4;
+    private static int PR_DUMPABLE_STAT = 0;
 
     private int prctl(Emulator<?> emulator) {
         RegisterContext context = emulator.getContext();
@@ -1150,6 +1153,17 @@ public class ARM64SyscallHandler extends AndroidSyscallHandler {
                 return 0;
             case PR_SET_NO_NEW_PRIVS:
             case PR_SET_THP_DISABLE:
+                return 0;
+            case PR_GET_DUMPABLE:
+                if (log.isDebugEnabled()) {
+                    log.debug("prctl get dumpable from: " + context.getLRPointer().toString());
+                }
+                return PR_DUMPABLE_STAT;
+            case PR_SET_DUMPABLE:
+                if (log.isDebugEnabled()) {
+                    log.debug("prctl set dumpable: " + arg2 + " from: "+context.getLRPointer().toString());
+                }
+                PR_DUMPABLE_STAT = (int) arg2;
                 return 0;
         }
         throw new UnsupportedOperationException("option=" + option);

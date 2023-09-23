@@ -3854,7 +3854,7 @@ public class ARM64SyscallHandler extends DarwinSyscallHandler {
         int count = context.getIntArg(offset + 2);
         byte[] data = buffer.getByteArray(0, count);
         if (log.isDebugEnabled()) {
-            log.debug("write fd=" + fd + ", buffer=" + buffer + ", count=" + count);
+            log.debug("write fd=" + fd + ", buffer=" + buffer + ", count=" + count+", LR="+context.getLRPointer().toString());
         }
 
         FileIO file = fdMap.get(fd);

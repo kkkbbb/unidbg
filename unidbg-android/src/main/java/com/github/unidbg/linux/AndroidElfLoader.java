@@ -274,9 +274,9 @@ public class AndroidElfLoader extends AbstractLoader<AndroidFileIO> implements M
                 Symbol symbol = module.findSymbolByName(symbolName, false);
                 if (symbol != null) {
                     ret = symbol;
-                    sm = module;
-                    break;
                 }
+                sm = module;
+                break;
             }
         }
         if (ret == null && ((int) handle == RTLD_DEFAULT || handle == 0L)) {

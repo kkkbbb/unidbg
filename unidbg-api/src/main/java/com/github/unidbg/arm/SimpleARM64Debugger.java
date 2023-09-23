@@ -20,6 +20,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import unicorn.Arm64Const;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 class SimpleARM64Debugger extends AbstractARMDebugger implements Debugger {
@@ -282,6 +283,20 @@ class SimpleARM64Debugger extends AbstractARMDebugger implements Debugger {
                     System.out.println("Add breakpoint: 0x" + Long.toHexString(addr) + (module == null ? "" : (" in " + module.name + " [0x" + Long.toHexString(addr - module.base) + "]")));
                     continue;
                 }
+                if("bs".equals(line)){
+                    long nextfp = backend.reg_read(Arm64Const.UC_ARM64_REG_FP).longValue();
+                    while (nextfp!=0){
+                        try{
+                            long frame = Objects.requireNonNull(UnidbgPointer.pointer(emulator, nextfp + 8)).getLong(0);
+                            System.out.println(Objects.requireNonNull(UnidbgPointer.pointer(emulator, frame)));
+                            nextfp = Objects.requireNonNull(UnidbgPointer.pointer(emulator, nextfp)).getLong(0);
+                        }catch (BackendException e){
+                            System.out.println("mem_read 0x"+Long.toHexString(nextfp)+" invalid FP");
+                            break;
+                        }
+                    }
+                    continue;
+                }
                 if(handleCommon(backend, line, address, size, nextAddress, runnable)) {
                     break;
                 }
@@ -298,6 +313,7 @@ class SimpleARM64Debugger extends AbstractARMDebugger implements Debugger {
         if (emulator.isRunning()) {
             System.out.println("bt: back trace");
         }
+        System.out.println("bs: back trace according stack");
         System.out.println();
         System.out.println("st hex: search stack");
         System.out.println("shw hex: search writable heap");
