@@ -53,7 +53,7 @@ class SimpleARM64Debugger extends AbstractARMDebugger implements Debugger {
                 nextAddress = disassemble(emulator, address, size, false);
             }
         } catch (BackendException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -189,7 +189,7 @@ class SimpleARM64Debugger extends AbstractARMDebugger implements Debugger {
                         String str = tokens[1];
                         value = Utils.parseNumber(str);
                     } catch(NumberFormatException e) {
-                        e.printStackTrace();
+                        e.printStackTrace(System.err);
                         continue;
                     }
 
@@ -238,7 +238,7 @@ class SimpleARM64Debugger extends AbstractARMDebugger implements Debugger {
                     try {
                         emulator.getUnwinder().unwind();
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        e.printStackTrace(System.err);
                     }
                     continue;
                 }
@@ -301,7 +301,7 @@ class SimpleARM64Debugger extends AbstractARMDebugger implements Debugger {
                     break;
                 }
             } catch (RuntimeException | DecoderException e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }
